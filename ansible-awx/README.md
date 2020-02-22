@@ -1,5 +1,5 @@
 # Ansible-AWX Installer
 
-ansible-playbook -i inventory install.yml -e @vars.yml
+```ansible-playbook -i inventory install.yml -e @vars.yml```
 
-grep -v '^#' inventory | grep -v '^$'
+```grep -v '^#' inventory | grep -v '^$'```
