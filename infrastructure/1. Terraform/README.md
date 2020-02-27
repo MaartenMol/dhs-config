@@ -1,0 +1,1 @@
+terraform apply -var="vsphere-password=P@ssword"
