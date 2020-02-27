@@ -114,7 +114,7 @@ admin_user=admin
 admin_password=P@ssword
 
 # Whether or not to create preload data for demonstration purposes
-create_preload_data=False
+#create_preload_data=False
 
 # AWX Secret key
 # It's *very* important that this stay the same between upgrades or you will lose the ability to decrypt
