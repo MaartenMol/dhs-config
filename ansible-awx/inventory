@@ -124,7 +124,7 @@ secret_key=VyW8AaI2qvhZmvN+vuzK2nVHlL1lJdNP4yQNVVq3
 # Build AWX with official logos
 # Requires cloning awx-logos repo as a sibling of this project.
 # Review the trademark guidelines at https://github.com/ansible/awx-logos/blob/master/TRADEMARKS.md
-awx_official=False
+#awx_official=False
 
 # Proxy
 #http_proxy=http://proxy:3128
