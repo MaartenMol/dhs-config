@@ -17,7 +17,7 @@ project_data_dir: '/var/lib/awx/projects'
 postgres_data_dir: '/var/lib/awx/pgdocker'
 docker_compose_dir: '/var/lib/awx/awxcompose'
 
-rabbitmq_password: 'awxpass'
+rabbitmq_password: 'GCPRAnRJ9NtH7q8UyDm6'
 rabbitmq_erlang_cookie: 'cookiemonster'
 secret_key: 'VyW8AaI2qvhZmvN+vuzK2nVHlL1lJdNP4yQNVVq3'
 
