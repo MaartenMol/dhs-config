@@ -1,0 +1,15 @@
+docker-01 ansible_host=172.27.72.61 ansible_user=root ansible_password=P@ssword
+docker-02 ansible_host=172.27.72.62 ansible_user=root ansible_password=P@ssword
+docker-03 ansible_host=172.27.72.63 ansible_user=root ansible_password=P@ssword
+
+[docker_engine]
+docker-01
+docker-02
+docker-03
+
+[docker_swarm_manager]
+docker-01 swarm_labels=deploy
+
+[docker_swarm_worker]
+docker-02
+docker-03
