@@ -1,8 +1,27 @@
+pg_username: 'awx'
+pg_password: 'ZerMgWtAg0jj54rRnRvP'
+pg_database: 'awx'
+pg_port: '5432'
+
+admin_user: 'admin'
 admin_password: 'P@ssword'
-pg_password: 'pgpass'
-rabbitmq_password: 'rabbitpass'
-secret_key: 'SGYsSWciI5yRDQeZuEm5wW98pQeJMG+ACABPsGfC'
-postgres_data_dir: '/var/lib/pgdocker'
-awx_official: 'true'
+
+dockerhub_base: 'ansible'
+awx_task_hostname: 'dhs-awx-task'
+awx_web_hostname: 'dhs-awx-web'
+
+host_port: '80'
+host_port_ssl: '443'
+
 project_data_dir: '/var/lib/awx/projects'
-awx_alternate_dns_servers: '"4.2.2.1,4.2.2.2"'
+postgres_data_dir: '/var/lib/awx/pgdocker'
+docker_compose_dir: '/var/lib/awx/awxcompose'
+
+rabbitmq_password: 'awxpass'
+rabbitmq_erlang_cookie: 'cookiemonster'
+secret_key: 'VyW8AaI2qvhZmvN+vuzK2nVHlL1lJdNP4yQNVVq3'
+
+awx_official: 'false'
+create_preload_data: 'false'
+
+awx_alternate_dns_servers: '172.27.72.4,1.1.1.1'
