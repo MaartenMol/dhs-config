@@ -1,19 +1,21 @@
 ---
-- hosts: docker_swarm_manager
+- hosts: all
   tasks:
     - name: Init a new swarm with default parameters
+      delegate_to: docker-01
       docker_swarm:
         state: present
     - name: Ansible register Swarm Join Token for Worker
+      delegate_to: docker-01
       shell: "docker swarm join-token worker -q"
       register: join_swarm_worker
-    - debug: msg={{ item }}
-      with_items: join_swarm_worker
-- hosts: docker_swarm_worker
-  tasks:
     - name: Add nodes to new swarm
+      delegate_to: "{{ item}}"
+      with_items:
+        - docker-02
+        - docker-03
       docker_swarm:
         state: join
         advertise_addr: ""
-        join_token: join_swarm_worker
+        join_token: "{{ join_swarm_worker.stdout }}"
         remote_addrs: [ '172.27.72.61:2377' ]
