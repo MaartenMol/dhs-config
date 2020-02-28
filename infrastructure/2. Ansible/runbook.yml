@@ -7,6 +7,8 @@
     - name: Ansible register Swarm Join Token for Worker
       shell: "docker swarm join-token worker -q"
       register: join_swarm_worker
+    - debug: msg={{ item }}
+      with_items: join_swarm_worker
 - hosts: docker_swarm_worker
   tasks:
     - name: Add nodes to new swarm
