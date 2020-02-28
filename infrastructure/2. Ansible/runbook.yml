@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: docker_engine
   tasks:
     - name: Init a new swarm with default parameters
       delegate_to: docker-01
