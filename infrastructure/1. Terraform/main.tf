@@ -157,9 +157,10 @@ resource "vsphere_virtual_machine" "DOCKER-01" {
       "dnf install curl nano -y && curl -L 'https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose",
       "dnf install python3 -y && dnf install python3-pip -y && dnf install epel-release -y && dnf install ansible -y",
       "dnf install git gcc gcc-c++ nodejs gettext device-mapper-persistent-data lvm2 bzip2 python3-pip -y",
-      "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose",
+      "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose jsondiff",
       "git clone https://github.com/MaartenMol/dhs-config.git ~/dhs-config",
       "export ANSIBLE_HOST_KEY_CHECKING=False",
+      "cd ~/dhs-config/infrastructure/2.\\ Ansible/ && ansible-playbook -i inventory runbook.yml",
       "cd ~/dhs-config/infrastructure/2.\\ Ansible/ && ansible-playbook -i inventory runbook.yml"
     ]
     connection {

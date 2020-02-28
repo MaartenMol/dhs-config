@@ -26,4 +26,4 @@
         state: present
         name: portainer
         compose:
-          - ~/dhs-config/infrastructure/3.\ Docker/portainer-agent-stack.yml
+          - ~/dhs-config/infrastructure/3. Docker/portainer-agent-stack.yml
