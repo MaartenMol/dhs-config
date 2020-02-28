@@ -19,3 +19,11 @@
         advertise_addr: ""
         join_token: "{{ join_swarm_worker.stdout }}"
         remote_addrs: [ '172.27.72.61:2377' ]
+- hosts: docker_swarm_manager
+  tasks:
+    - name: Deploy Portainer
+      docker_stack:
+        state: present
+        name: portainer
+        compose:
+          - ~/dhs-config/infrastructure/3.\ Docker/portainer-agent-stack.yml
