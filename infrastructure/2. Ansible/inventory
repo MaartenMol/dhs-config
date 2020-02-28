@@ -1,3 +1,5 @@
+localhost ansible_connection=local ansible_python_interpreter="/usr/bin/env python3"
+
 docker-01 ansible_host=172.27.72.61 ansible_user=root ansible_password=P@ssword
 docker-02 ansible_host=172.27.72.62 ansible_user=root ansible_password=P@ssword
 docker-03 ansible_host=172.27.72.63 ansible_user=root ansible_password=P@ssword
