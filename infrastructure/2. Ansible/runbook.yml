@@ -12,5 +12,5 @@
     - name: Add nodes to new swarm
       docker_swarm:
         state: join
-        join_token: "{{ join_swarm_worker }}"
+        join_token: join_swarm_worker
         remote_addrs: [ '172.27.72.61:2377' ]
