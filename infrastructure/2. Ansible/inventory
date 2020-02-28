@@ -8,7 +8,7 @@ docker-02
 docker-03
 
 [docker_swarm_manager]
-docker-01 swarm_labels=deploy
+docker-01
 
 [docker_swarm_worker]
 docker-02
