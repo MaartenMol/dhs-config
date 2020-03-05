@@ -104,7 +104,7 @@ resource "vsphere_virtual_machine" "ANSIBLE-AWX" {
 }
 
 resource "vsphere_virtual_machine" "DOCKER-01" {
-  depends_on            = ["vsphere_virtual_machine.DOCKER-02", "vsphere_virtual_machine.DOCKER-03"]
+  depends_on            = [vsphere_virtual_machine.DOCKER-02, vsphere_virtual_machine.DOCKER-03]
   name                  = "DOCKER-01.DHSNEXT.nl"
   resource_pool_id      = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id          = data.vsphere_datastore.datastore.id
@@ -290,6 +290,130 @@ resource "vsphere_virtual_machine" "DOCKER-03" {
     connection {
       type        = "ssh"
       host        = "172.27.72.63"
+      user        = "root"
+      password    = "P@ssword"
+    }
+  } 
+}
+
+resource "vsphere_virtual_machine" "LB-01" {
+  name                  = "LB-01.DHSNEXT.nl"
+  resource_pool_id      = data.vsphere_compute_cluster.cluster.resource_pool_id
+  datastore_id          = data.vsphere_datastore.datastore.id
+  folder                = "ConfigManagement"
+
+  num_cpus              = 2
+  num_cores_per_socket  = 2
+  memory                = 2048
+  guest_id              = data.vsphere_virtual_machine.template.guest_id
+  firmware              = data.vsphere_virtual_machine.template.firmware
+
+  scsi_type             = data.vsphere_virtual_machine.template.scsi_type
+
+  network_interface {
+    network_id          = data.vsphere_network.network.id
+    adapter_type        = data.vsphere_virtual_machine.template.network_interface_types[0]
+  }
+
+  disk {
+    label               = "disk0"
+    size                = data.vsphere_virtual_machine.template.disks.0.size
+    eagerly_scrub       = data.vsphere_virtual_machine.template.disks.0.eagerly_scrub
+    thin_provisioned    = data.vsphere_virtual_machine.template.disks.0.thin_provisioned
+  }
+
+  clone {
+    template_uuid       = data.vsphere_virtual_machine.template.id
+    linked_clone        = "false"
+
+    customize {
+      linux_options {
+        host_name       = "LB-01"
+        domain          = "DHSNEXT.nl"
+      }
+
+      network_interface {
+        ipv4_address    = "172.27.72.65"
+        ipv4_netmask    = 24
+      }
+
+      ipv4_gateway      = "172.27.72.1"
+      dns_server_list   = ["172.27.72.4"]
+      dns_suffix_list   = ["DHSNEXT.nl"]
+    }
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "dnf install -y gcc kernel-headers kernel-devel && dnf install -y haproxy keepalived",
+      "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/haproxy.cfg -O /etc/haproxy/haproxy.cfg",
+      "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/keepalived-master.conf -O /etc/keepalived/keepalived.conf",
+      "systemctl enable keepalived && systemctl start keepalived && systemctl enable haproxy && systemctl start haproxy"
+    ]
+    connection {
+      type        = "ssh"
+      host        = "172.27.72.65"
+      user        = "root"
+      password    = "P@ssword"
+    }
+  } 
+}
+
+resource "vsphere_virtual_machine" "LB-02" {
+  name                  = "LB-02.DHSNEXT.nl"
+  resource_pool_id      = data.vsphere_compute_cluster.cluster.resource_pool_id
+  datastore_id          = data.vsphere_datastore.datastore.id
+  folder                = "ConfigManagement"
+
+  num_cpus              = 2
+  num_cores_per_socket  = 2
+  memory                = 2048
+  guest_id              = data.vsphere_virtual_machine.template.guest_id
+  firmware              = data.vsphere_virtual_machine.template.firmware
+
+  scsi_type             = data.vsphere_virtual_machine.template.scsi_type
+
+  network_interface {
+    network_id          = data.vsphere_network.network.id
+    adapter_type        = data.vsphere_virtual_machine.template.network_interface_types[0]
+  }
+
+  disk {
+    label               = "disk0"
+    size                = data.vsphere_virtual_machine.template.disks.0.size
+    eagerly_scrub       = data.vsphere_virtual_machine.template.disks.0.eagerly_scrub
+    thin_provisioned    = data.vsphere_virtual_machine.template.disks.0.thin_provisioned
+  }
+
+  clone {
+    template_uuid       = data.vsphere_virtual_machine.template.id
+    linked_clone        = "false"
+
+    customize {
+      linux_options {
+        host_name       = "LB-02"
+        domain          = "DHSNEXT.nl"
+      }
+
+      network_interface {
+        ipv4_address    = "172.27.72.66"
+        ipv4_netmask    = 24
+      }
+
+      ipv4_gateway      = "172.27.72.1"
+      dns_server_list   = ["172.27.72.4"]
+      dns_suffix_list   = ["DHSNEXT.nl"]
+    }
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "dnf install -y gcc kernel-headers kernel-devel && dnf install -y haproxy keepalived",
+      "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/haproxy.cfg -O /etc/haproxy/haproxy.cfg",
+      "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/keepalived-slave.conf -O /etc/keepalived/keepalived.conf",
+      "systemctl enable keepalived && systemctl start keepalived && systemctl enable haproxy && systemctl start haproxy"
+    ]
+    connection {
+      type        = "ssh"
+      host        = "172.27.72.66"
       user        = "root"
       password    = "P@ssword"
     }
