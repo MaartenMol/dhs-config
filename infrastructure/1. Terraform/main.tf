@@ -89,9 +89,7 @@ resource "vsphere_virtual_machine" "ANSIBLE-AWX" {
       "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose ansible-tower-cli",
       "git clone https://github.com/ansible/awx.git ~/awx",
       "wget --timeout=1 --tries=3 https://raw.githubusercontent.com/MaartenMol/dhs-config/master/ansible-awx/inventory?token=AC4QWR7K7TI6QEB5J5QLRLC6MD64Q -O ~/inventory",
-      "wget https://raw.githubusercontent.com/MaartenMol/dhs-awx/master/awx/ui/client/assets/favicon.ico -O ~/awx/awx/ui/client/assets/favicon.ico",
-      "wget https://raw.githubusercontent.com/MaartenMol/dhs-awx/master/awx/ui/client/assets/logo-login.svg -O ~/awx/awx/ui/client/assets/logo-login.svg",
-      "wget https://raw.githubusercontent.com/MaartenMol/dhs-awx/master/awx/ui/client/assets/logo-header.svg -O ~/awx/awx/ui/client/assets/logo-header.svg",
+      "docker run -d -p 9001:9001 --name=portainer_agent --restart=always -v /var/run/docker.sock:/var/run/docker.sock portainer/agent",
       "cd ~ && ansible-playbook -i inventory awx/installer/install.yml"
     ]
     connection {
