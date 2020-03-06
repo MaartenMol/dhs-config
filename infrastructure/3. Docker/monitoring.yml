@@ -128,6 +128,11 @@ services:
     image: prom/alertmanager:v0.20.0
     networks:
       - net
+    ports:
+      - target: 9093
+        published: 9093
+        protocol: tcp
+        mode: ingress
     configs:
       - source: alertmanager
         target: /etc/alertmanager/alertmanager.yml
@@ -167,7 +172,7 @@ services:
         protocol: tcp
         mode: ingress
     environment:
-      ALERTMANAGER_URIS: http://alertmanager:9093
+      ALERTMANAGER_URIS: http://alertmanager.dhsnext.nl:9093
     deploy:
       mode: replicated
       replicas: 1
