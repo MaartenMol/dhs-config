@@ -1,0 +1,158 @@
+version: "3.4"
+
+networks:
+  net:
+    driver: overlay
+    attachable: true
+
+configs:
+  elasticsearch:
+    file: ./config/elasticsearch.yml
+  logstash:
+    file: ./config/logstash.yml
+  pipeline:
+    file: ./config/logstash-pipeline.conf
+  kibana:
+    file: ./config/kibana.yml
+  filebeat:
+    file: ./config/filebeat.yml
+
+volumes:
+    elasticsearch: {}
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch::7.6.1
+    configs:
+      - source: elasticsearch
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      ES_JAVA_OPTS: "-Xmx2048m -Xms512m"
+    networks:
+      - net
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          memory: 2048M
+        reservations:
+          memory: 512M
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.6.1
+    configs:
+      - source: logstash
+        target: /usr/share/logstash/config/logstash.yml
+      - source: pipeline
+        target: /usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp
+        mode: ingress
+      - target: 5044
+        published: 5044
+        protocol: tcp
+        mode: ingress
+      - target: 8514
+        published: 8514
+        protocol: tcp
+        mode: ingress
+      - target: 8514
+        published: 8514
+        protocol: udp
+        mode: ingress
+      - target: 9600
+        published: 9600
+        protocol: tcp
+        mode: ingress
+    environment:
+      LS_JAVA_OPTS: "-Xmx512m -Xms256m"
+    networks:
+      - net
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.6.1
+    configs:
+      - source: kibana
+        target: /usr/share/kibana/config/kibana.yml
+    ports:
+      - target: 5601
+        published: 5601
+        protocol: tcp
+        mode: ingress
+    networks:
+      - net
+    depends_on:
+      - elasticsearch
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 256M
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.6.1
+    user: root
+    networks:
+      - net
+    configs:
+      - source: filebeat
+        target: /usr/share/filebeat/filebeat.yml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # This is needed for filebeat to load container log path as specified in filebeat.yml
+      - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
+      # This is needed for filebeat to load logs for system and auth modules
+      - /var/log/:/var/log/:ro
+      # This is needed for filebeat to load logs for auditd module
+      - /var/log/audit/:/var/log/audit/:ro
+    # disable strict permission checks
+    command: ["--strict.perms=false"]
+    environment:
+      - ELASTICSEARCH_HOST="elasticsearch:9200"
+      - KIBANA_HOST="kibana:5601"
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
