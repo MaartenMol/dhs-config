@@ -92,7 +92,9 @@ resource "vsphere_virtual_machine" "ANSIBLE-AWX" {
       "docker run -d -p 9001:9001 --name=portainer_agent --restart=always -v /var/run/docker.sock:/var/run/docker.sock portainer/agent",
       "docker run -d -p 9100:9100 --name=node_exporter -v '/proc:/host/proc' -v '/sys:/host/sys' -v '/:/rootfs' -v '/etc/hostname:/etc/nodename' --net='host' prom/node-exporter --path.sysfs /host/sys --path.procfs /host/proc --collector.filesystem.ignored-mount-points '^/(sys|proc|dev|host|etc)($$|/)' --no-collector.ipvs",
       "docker run -d -p 8080:8080 --name=cadvisor -v '/:/rootfs:ro' -v '/var/run:/var/run:ro' -v '/sys:/sys:ro' -v '/var/lib/docker/:/var/lib/docker:ro' -v '/dev/disk/:/dev/disk:ro' google/cadvisor",
-      "cd ~ && ansible-playbook -i inventory awx/installer/install.yml"
+      "cd ~ && ansible-playbook -i inventory awx/installer/install.yml",
+      "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
+      "chmod 600 ~/.ssh/authorized_keys"
     ]
     connection {
       type        = "ssh"
@@ -161,7 +163,9 @@ resource "vsphere_virtual_machine" "DOCKER-01" {
       "git clone https://github.com/MaartenMol/dhs-config.git ~/dhs-config",
       "export ANSIBLE_HOST_KEY_CHECKING=False",
       "cd ~/dhs-config/infrastructure/2.\\ Ansible/ && ansible-playbook -i inventory runbook.yml",
-      "cd ~/dhs-config/infrastructure/2.\\ Ansible/ && ansible-playbook -i inventory runbook.yml"
+      "cd ~/dhs-config/infrastructure/2.\\ Ansible/ && ansible-playbook -i inventory runbook.yml",
+      "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
+      "chmod 600 ~/.ssh/authorized_keys"
     ]
     connection {
       type        = "ssh"
@@ -223,7 +227,9 @@ resource "vsphere_virtual_machine" "DOCKER-02" {
       "dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo && dnf list docker-ce",
       "dnf install docker-ce --nobest -y && systemctl disable firewalld && systemctl stop firewalld && systemctl enable docker && systemctl start docker",
       "dnf install python3 python3-pip -y",
-      "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose"
+      "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose",
+      "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
+      "chmod 600 ~/.ssh/authorized_keys"
     ]
     connection {
       type        = "ssh"
@@ -285,7 +291,9 @@ resource "vsphere_virtual_machine" "DOCKER-03" {
       "dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo && dnf list docker-ce",
       "dnf install docker-ce --nobest -y && systemctl disable firewalld && systemctl stop firewalld && systemctl enable docker && systemctl start docker",
       "dnf install python3 python3-pip -y",
-      "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose"
+      "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose",
+      "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
+      "chmod 600 ~/.ssh/authorized_keys"
     ]
     connection {
       type        = "ssh"
@@ -347,7 +355,9 @@ resource "vsphere_virtual_machine" "LB-01" {
       "dnf install -y gcc kernel-headers kernel-devel && dnf install -y haproxy keepalived",
       "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/haproxy.cfg -O /etc/haproxy/haproxy.cfg",
       "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/keepalived-master.conf -O /etc/keepalived/keepalived.conf",
-      "systemctl enable keepalived && systemctl start keepalived && systemctl enable haproxy && systemctl start haproxy"
+      "systemctl enable keepalived && systemctl start keepalived && systemctl enable haproxy && systemctl start haproxy",
+      "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
+      "chmod 600 ~/.ssh/authorized_keys"
     ]
     connection {
       type        = "ssh"
@@ -409,7 +419,9 @@ resource "vsphere_virtual_machine" "LB-02" {
       "dnf install -y gcc kernel-headers kernel-devel && dnf install -y haproxy keepalived",
       "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/haproxy.cfg -O /etc/haproxy/haproxy.cfg",
       "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/keepalived-slave.conf -O /etc/keepalived/keepalived.conf",
-      "systemctl enable keepalived && systemctl start keepalived && systemctl enable haproxy && systemctl start haproxy"
+      "systemctl enable keepalived && systemctl start keepalived && systemctl enable haproxy && systemctl start haproxy",
+      "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
+      "chmod 600 ~/.ssh/authorized_keys"
     ]
     connection {
       type        = "ssh"
