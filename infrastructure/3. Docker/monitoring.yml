@@ -85,10 +85,10 @@ services:
       GF_AUTH_LDAP_ENABLED: 'true'
     volumes:
       - grafana:/var/lib/grafana
-    healthcheck:
-      test: "/usr/bin/curl -s -I -X GET http://localhost:3000/login"
-      interval: 10s
-      timeout: 3s
+    # healthcheck:
+    #   test: "/usr/bin/curl -s -I -X GET http://localhost:3000/login"
+    #   interval: 10s
+    #   timeout: 3s
     deploy:
       mode: replicated
       replicas: 1
@@ -167,7 +167,7 @@ services:
         protocol: tcp
         mode: ingress
     environment:
-      - "ALERTMANAGER_URIS=http://alertmanager:9093"
+      ALERTMANAGER_URIS=http://alertmanager:9093
     deploy:
       mode: replicated
       replicas: 1
