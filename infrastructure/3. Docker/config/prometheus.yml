@@ -65,7 +65,7 @@ scrape_configs:
     metrics_path: '/metrics'
     static_configs:
       - targets:
-        - 'dhsnext-vc-01.dhsnext.nl'
+        - '172.27.72.3'
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
