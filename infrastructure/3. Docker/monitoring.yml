@@ -191,35 +191,35 @@ services:
         max_attempts: 3
         window: 10s
 
-  node-exporter:
-    image: prom/node-exporter:v0.18.1
-    networks:
-      - net
-    environment:
-      - NODE_ID={{.Node.ID}}
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-      - /etc/hostname:/etc/nodename
-    command:
-      - '--path.sysfs=/host/sys'
-      - '--path.procfs=/host/proc'
-      - '--collector.textfile.directory=/etc/node-exporter/'
-      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
-      - '--no-collector.ipvs'
-    deploy:
-      mode: global
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 10s
-      resources:
-        limits:
-          memory: 128M
-        reservations:
-          memory: 64M
+  # node-exporter:
+  #   image: prom/node-exporter:v0.18.1
+  #   networks:
+  #     - net
+  #   environment:
+  #     - NODE_ID={{.Node.ID}}
+  #   volumes:
+  #     - /proc:/host/proc:ro
+  #     - /sys:/host/sys:ro
+  #     - /:/rootfs:ro
+  #     - /etc/hostname:/etc/nodename
+  #   command:
+  #     - '--path.sysfs=/host/sys'
+  #     - '--path.procfs=/host/proc'
+  #     - '--collector.textfile.directory=/etc/node-exporter/'
+  #     - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+  #     - '--no-collector.ipvs'
+  #   deploy:
+  #     mode: global
+  #     restart_policy:
+  #       condition: on-failure
+  #       delay: 5s
+  #       max_attempts: 3
+  #       window: 10s
+  #     resources:
+  #       limits:
+  #         memory: 128M
+  #       reservations:
+  #         memory: 64M
 
   vmware_exporter:
     image: pryorda/vmware_exporter:v0.11.1

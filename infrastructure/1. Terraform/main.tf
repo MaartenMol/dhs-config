@@ -165,7 +165,10 @@ resource "vsphere_virtual_machine" "DOCKER-01" {
       "cd ~/dhs-config/infrastructure/2.\\ Ansible/ && ansible-playbook -i inventory runbook.yml",
       "cd ~/dhs-config/infrastructure/2.\\ Ansible/ && ansible-playbook -i inventory runbook.yml",
       "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
-      "chmod 600 ~/.ssh/authorized_keys"
+      "chmod 600 ~/.ssh/authorized_keys",
+      "wget https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz && tar -xzvf node_exporter-0.18.1.linux-amd64.tar.gz && mv node_exporter-0.18.1.linux-amd64 node_exporter",
+      "curl https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/node_exporter.service > /etc/systemd/system/node_exporter.service",
+      "systemctl daemon-reload && systemctl start node_exporter && systemctl enable node_exporter"
     ]
     connection {
       type        = "ssh"
@@ -229,7 +232,10 @@ resource "vsphere_virtual_machine" "DOCKER-02" {
       "dnf install python3 python3-pip -y",
       "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose",
       "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
-      "chmod 600 ~/.ssh/authorized_keys"
+      "chmod 600 ~/.ssh/authorized_keys",
+      "wget https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz && tar -xzvf node_exporter-0.18.1.linux-amd64.tar.gz && mv node_exporter-0.18.1.linux-amd64 node_exporter",
+      "curl https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/node_exporter.service > /etc/systemd/system/node_exporter.service",
+      "systemctl daemon-reload && systemctl start node_exporter && systemctl enable node_exporter"
     ]
     connection {
       type        = "ssh"
@@ -293,7 +299,10 @@ resource "vsphere_virtual_machine" "DOCKER-03" {
       "dnf install python3 python3-pip -y",
       "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose",
       "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
-      "chmod 600 ~/.ssh/authorized_keys"
+      "chmod 600 ~/.ssh/authorized_keys",
+      "wget https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz && tar -xzvf node_exporter-0.18.1.linux-amd64.tar.gz && mv node_exporter-0.18.1.linux-amd64 node_exporter",
+      "curl https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/node_exporter.service > /etc/systemd/system/node_exporter.service",
+      "systemctl daemon-reload && systemctl start node_exporter && systemctl enable node_exporter"
     ]
     connection {
       type        = "ssh"
@@ -357,7 +366,10 @@ resource "vsphere_virtual_machine" "LB-01" {
       "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/keepalived-master.conf -O /etc/keepalived/keepalived.conf",
       "systemctl enable keepalived && systemctl start keepalived && systemctl enable haproxy && systemctl start haproxy",
       "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
-      "chmod 600 ~/.ssh/authorized_keys"
+      "chmod 600 ~/.ssh/authorized_keys",
+      "wget https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz && tar -xzvf node_exporter-0.18.1.linux-amd64.tar.gz && mv node_exporter-0.18.1.linux-amd64 node_exporter",
+      "curl https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/node_exporter.service > /etc/systemd/system/node_exporter.service",
+      "systemctl daemon-reload && systemctl start node_exporter && systemctl enable node_exporter"
     ]
     connection {
       type        = "ssh"
@@ -421,7 +433,10 @@ resource "vsphere_virtual_machine" "LB-02" {
       "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/keepalived-slave.conf -O /etc/keepalived/keepalived.conf",
       "systemctl enable keepalived && systemctl start keepalived && systemctl enable haproxy && systemctl start haproxy",
       "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
-      "chmod 600 ~/.ssh/authorized_keys"
+      "chmod 600 ~/.ssh/authorized_keys",
+      "wget https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz && tar -xzvf node_exporter-0.18.1.linux-amd64.tar.gz && mv node_exporter-0.18.1.linux-amd64 node_exporter",
+      "curl https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/node_exporter.service > /etc/systemd/system/node_exporter.service",
+      "systemctl daemon-reload && systemctl start node_exporter && systemctl enable node_exporter"
     ]
     connection {
       type        = "ssh"
