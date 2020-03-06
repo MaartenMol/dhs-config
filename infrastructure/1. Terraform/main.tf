@@ -90,6 +90,8 @@ resource "vsphere_virtual_machine" "ANSIBLE-AWX" {
       "git clone https://github.com/ansible/awx.git ~/awx",
       "wget --timeout=1 --tries=3 https://raw.githubusercontent.com/MaartenMol/dhs-config/master/ansible-awx/inventory?token=AC4QWR7K7TI6QEB5J5QLRLC6MD64Q -O ~/inventory",
       "docker run -d -p 9001:9001 --name=portainer_agent --restart=always -v /var/run/docker.sock:/var/run/docker.sock portainer/agent",
+      "docker run -d -p 9100:9100 --name=node_exporter -v '/proc:/host/proc' -v '/sys:/host/sys' -v '/:/rootfs' -v '/etc/hostname:/etc/nodename' --net='host' prom/node-exporter --path.sysfs /host/sys --path.procfs /host/proc --collector.filesystem.ignored-mount-points '^/(sys|proc|dev|host|etc)($$|/)' --no-collector.ipvs",
+      "docker run -d -p 8080:8080 --name=cadvisor -v '/:/rootfs:ro' -v '/var/run:/var/run:ro' -v '/sys:/sys:ro' -v '/var/lib/docker/:/var/lib/docker:ro' -v '/dev/disk/:/dev/disk:ro' google/cadvisor",
       "cd ~ && ansible-playbook -i inventory awx/installer/install.yml"
     ]
     connection {

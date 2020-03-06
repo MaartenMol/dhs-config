@@ -23,6 +23,8 @@ configs:
     file: ./config/swarm_task.rules.yml
   karma:
     file: ./config/karma.yaml
+  datasource:
+    file: ./config/datasource.yml
 
 services:
   cadvisor:
@@ -65,6 +67,8 @@ services:
     configs:
       - source: ldap
         target: /etc/grafana/ldap.toml
+      - source: datasource
+        target: /etc/grafana/provisioning/datasources/datasource.yml
     environment:
       TZ: Europe/Amsterdam
       GF_EXTERNAL_IMAGE_STORAGE_PROVIDER: local

@@ -32,6 +32,8 @@ scrape_configs:
         target_label: instance
 
   - job_name: cadvisor
+    static_configs:
+      - targets: ['172.27.72.60:8080']
     dns_sd_configs:
     - names:
       - 'tasks.cadvisor'
@@ -45,6 +47,8 @@ scrape_configs:
         target_label: instance
 
   - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['172.27.72.60:9100']
     dns_sd_configs:
     - names:
       - 'tasks.node-exporter'
