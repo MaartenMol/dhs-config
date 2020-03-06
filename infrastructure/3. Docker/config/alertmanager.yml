@@ -1,0 +1,15 @@
+route:
+  receiver: 'test-team'
+  group_by: ['alertname']
+  group_wait: 15s
+  group_interval: 15s
+  repeat_interval: 1m
+
+receivers:
+  - name: 'test-team'
+    slack_configs:
+      - send_resolved: true
+        text: "{{ .CommonAnnotations.description }}"
+        username: 'Alertmanager'
+        channel: 'monitoring'
+        api_url: 'https://hooks.slack.com/services/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'

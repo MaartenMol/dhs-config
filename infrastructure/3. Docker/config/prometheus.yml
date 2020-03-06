@@ -1,0 +1,97 @@
+global:
+  scrape_interval: 30s
+  evaluation_interval: 15s
+  external_labels:
+    environment: Production
+    service: Prometheus
+    monitor: DHSNEXT
+
+rule_files:
+  - "swarm_node.rules.yml"
+  - "swarm_task.rules.yml"
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - alertmanager:9093
+
+scrape_configs:
+  - job_name: prometheus
+    scrape_interval: 60s
+    dns_sd_configs:
+    - names:
+      - 'tasks.prometheus'
+      type: 'A'
+      port: 9090
+    relabel_configs:
+      - source_labels: [__address__]
+        separator: ':'
+        regex: '(.*):(.*)'
+        replacement: '$1'
+        target_label: instance
+
+  - job_name: cadvisor
+    dns_sd_configs:
+    - names:
+      - 'tasks.cadvisor'
+      type: 'A'
+      port: 8080
+    relabel_configs:
+      - source_labels: [__address__]
+        separator: ':'
+        regex: '(.*):(.*)'
+        replacement: '$1'
+        target_label: instance
+
+  - job_name: 'node-exporter'
+    dns_sd_configs:
+    - names:
+      - 'tasks.node-exporter'
+      type: 'A'
+      port: 9100
+    relabel_configs:
+      - source_labels: [__address__]
+        separator: ':'
+        regex: '(.*):(.*)'
+        replacement: '$1'
+        target_label: instance
+
+  # - job_name: haproxy
+  #   scrape_interval: 60s
+  #   dns_sd_configs:
+  #   - names:
+  #     - 'tasks.haproxy'
+  #     type: 'A'
+  #     port: 9101
+
+  # - job_name: 'pushgateway'
+  #   scrape_interval: 5s
+  #   honor_labels: true
+  #   dns_sd_configs:
+  #   - names:
+  #     - 'tasks.pushgateway'
+  #     type: 'A'
+  #     port: 9091
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       separator: ':'
+  #       regex: '(.*):(.*)'
+  #       replacement: '$1'
+  #       target_label: instance
+    
+  # - job_name: node-exporter
+  #   consul_sd_configs:
+  #     - server:   'CONSUL:8500'
+  #       services: ["Node-Exporter"]
+  #   relabel_configs:
+  #     - source_labels: ['__meta_consul_address']
+  #       separator: ';'
+  #       target_label:  '__address__'
+  #       replacement: '${1}:9100'
+  #       action: 'replace'
+  #     - source_labels: [__address__]
+  #       separator: ':'
+  #       regex: '(.*):(.*)'
+  #       replacement: '$1'
+  #       target_label: instance

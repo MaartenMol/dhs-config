@@ -1,0 +1,252 @@
+version: "3.3"
+
+networks:
+  net:
+    driver: overlay
+    attachable: true
+
+volumes:
+    prometheus: {}
+    grafana: {}
+    alertmanager: {}
+
+configs:
+  alertmanager:
+    file: ./config/alertmanager.yml
+  ldap:
+    file: ./config/ldap.toml
+  prometheus:
+    file: ./config/prometheus.yml
+  node_rules:
+    file: ./config/swarm_node.rules.yml
+  task_rules:
+    file: ./config/swarm_task.rules.yml
+
+services:
+  cadvisor:
+    image: google/cadvisor
+    networks:
+      - net
+    command: -logtostderr -docker_only
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /:/rootfs:ro
+      - /var/run:/var/run
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    healthcheck:
+      test: "/usr/bin/wget -q -Y off http://localhost:8080/healthz -O /dev/null > /dev/null 2>&1"
+      interval: 25s
+      timeout: 3s
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  grafana:
+    image: grafana/grafana:6.6.2
+    networks:
+      - net
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: ingress
+    configs:
+      - source: ldap
+        target: /etc/grafana/ldap.toml
+    environment:
+      TZ: Europe/Amsterdam
+      GF_EXTERNAL_IMAGE_STORAGE_PROVIDER: local
+      GF_INSTALL_PLUGINS: grafana-piechart-panel,grafana-simple-json-datasource,jdbranham-diagram-panel,vonage-status-panel,gnocchixyz-gnocchi-datasource
+      #GF_DATABASE_HOST: "postgres:5432"
+      #GF_DATABASE_PASSWORD: SuperGrafanaPass123
+      #GF_DATABASE_SSL_MODE: disable
+      #GF_DATABASE_TYPE: postgres
+      #GF_DATABASE_USER: grafana
+      GF_SERVER_DOMAIN: grafana.dhsnext.nl
+      GF_SERVER_ROOT_URL: http://grafana.dhsnext.nl
+      GF_SESSION_PROVIDER: redis
+      GF_SESSION_PROVIDER_CONFIG: addr=redis:6379,pool_size=100,db=grafana
+      GF_USERS_ALLOW_ORG_CREATE: 'false'
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+      GF_USERS_AUTO_ASSIGN_ORG: 'true'
+      GF_USERS_AUTO_ASSIGN_ORG_ROLE: Editor
+      GF_ALERTING_ENABLED: 'true'
+      GF_EXPLORE_ENABLED: 'true'
+      GF_AUTH_LDAP_ENABLED: 'true'
+    volumes:
+      - grafana:/var/lib/grafana
+    healthcheck:
+      test: "/usr/bin/curl -s -I -X GET http://localhost:3000/login"
+      interval: 10s
+      timeout: 3s
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  redis:
+    image: redis
+    networks:
+      - net
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+
+  alertmanager:
+    image: prom/alertmanager:v0.20.0
+    networks:
+      - net
+    configs:
+      - source: alertmanager
+        target: /etc/alertmanager/alertmanager.yml
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    volumes:
+      - alertmanager:/alertmanager
+    healthcheck:
+      test: "/bin/wget -q -Y off http://localhost:9093/metrics -O /dev/null > /dev/null 2>&1"
+      interval: 10s
+      timeout: 3s
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  karma:
+    image: lmierzwa/karma:v0.55
+    networks:
+      - net
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: ingress
+    environment:
+      - "ALERTMANAGER_URIS=http://alertmanager:9093"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+
+  node-exporter:
+    image: prom/node-exporter:v0.18.1
+    networks:
+      - net
+    environment:
+      - NODE_ID={{.Node.ID}}
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /etc/hostname:/etc/nodename
+    command:
+      - '--path.sysfs=/host/sys'
+      - '--path.procfs=/host/proc'
+      - '--collector.textfile.directory=/etc/node-exporter/'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--no-collector.ipvs'
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  prometheus:
+    image: prom/prometheus:v2.16.0
+    networks:
+      - net
+    ports:
+      - target: 9090
+        published: 9090
+        protocol: tcp
+        mode: ingress
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=168h'
+      - '--web.enable-lifecycle'
+    volumes:
+      - prometheus:/prometheus
+    configs:
+      - source: prometheus
+        target: /etc/prometheus/prometheus.yml
+      - source: node_rules
+        target: /etc/prometheus/swarm_node.rules.yml
+      - source: task_rules
+        target: /etc/prometheus/swarm_task.rules.yml
+    healthcheck:
+      test: "/bin/wget -q -Y off http://localhost:9090/status -O /dev/null > /dev/null 2>&1"
+      interval: 10s
+      timeout: 3s
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          memory: 2048M
+        reservations:
+          memory: 128M

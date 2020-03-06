@@ -1,0 +1,68 @@
+groups:
+- name: Linux
+  rules:
+  - alert: CPUFree10%
+    expr: (100 * (1 - avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])))) >= 90
+    for: 1m
+    labels:
+      severity: warning
+      vm: "{{ $labels.instance }}"
+    annotations:
+      summary: "Machine {{$labels.instance}} is using too much CPU"
+      description: "{{$labels.instance}} has {{ humanize $value }}% of its CPU used!"
+      link: "http://grafana.dhsnext.nl/d/9CWBz0bik/linux-nodes?node={{$labels.instance}}"
+      value: "{{ humanize $value }}%"
+  - alert: CPUFree20%
+    expr: (100 * (1 - avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])))) >= 80
+    for: 1m
+    labels:
+      severity: moderate
+      vm: "{{ $labels.instance }}"
+    annotations:
+      summary: "Machine {{ $labels.instance }} is using too much CPU"
+      description: "{{ $labels.instance }} has {{ humanize $value }}% of its CPU used!"
+      link: "http://grafana.dhsnext.nl/d/9CWBz0bik/linux-nodes?node={{ $labels.instance }}"
+      value: "{{ humanize $value }}%"
+  - alert: MemoryFree10%
+    expr: 100 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 >= 90
+    for: 1m
+    labels:
+      severity: warning
+      vm: "{{ $labels.instance }}"
+    annotations:
+      summary: "Machine {{ $labels.instance }} is low on memory"
+      description: "{{ $labels.instance }} has {{ humanize $value }}% of its memory used!"
+      link: "http://grafana.dhsnext.nl/d/9CWBz0bik/linux-nodes?node={{ $labels.instance }}"
+      value: "{{ humanize $value }}%"
+  - alert: MemoryFree20%
+    expr: 100 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 >= 80
+    for: 1m
+    labels:
+      severity: moderate
+      vm: "{{ $labels.instance }}"
+    annotations:
+      summary: "Machine {{ $labels.instance }} is starting to get low on memory"
+      description: "{{ $labels.instance }} has {{ humanize $value }}% of its memory used!"
+      link: "http://grafana.dhsnext.nl/d/9CWBz0bik/linux-nodes?node={{ $labels.instance }}"
+      value: "{{ humanize $value }}%"
+  - alert: DiskFree10%
+    expr: 100 - (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 >= 90
+    for: 1m
+    labels:
+      severity: warning
+      vm: "{{ $labels.instance }}"
+    annotations:
+      summary: "Machine {{ $labels.instance }} has not much space left in {{ $labels.mountpoint }}"
+      description: "{{ $labels.instance }} has {{ humanize $value }}% of its disk used in {{ $labels.mountpoint }}!"
+      link: "http://grafana.dhsnext.nl/d/9CWBz0bik/linux-nodes?node={{ $labels.instance }}"
+  - alert: DiskFree20%
+    expr: 100 - (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 >= 80
+    for: 1m
+    labels:
+      severity: moderate
+      vm: "{{ $labels.instance }}"
+    annotations:
+      summary: "Machine {{ $labels.instance }} has not much space left in {{ $labels.mountpoint }}"
+      description: "{{ $labels.instance }} has {{ humanize $value }}% of its disk used in {{ $labels.mountpoint }}!"
+      link: "http://grafana.dhsnext.nl/d/9CWBz0bik/linux-nodes?node={{ $labels.instance }}"
+      value: "{{ humanize $value }}%"
