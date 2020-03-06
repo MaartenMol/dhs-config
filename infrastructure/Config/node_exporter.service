@@ -5,7 +5,7 @@ After=network-online.target
 
 [Service]
 User=root
-ExecStart=/root/node_exporter --collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)" --no-collector.ipvs
+ExecStart=/root/node_exporter/node_exporter --collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)" --no-collector.ipvs
 
 [Install]
 WantedBy=default.target
