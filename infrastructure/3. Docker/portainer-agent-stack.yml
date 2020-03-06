@@ -15,7 +15,7 @@ services:
 
   portainer:
     image: portainer/portainer
-    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    command: --external-endpoints /endpoints/endpoints.json --logo "https://img.maartenmol.nl/DHS_White%20zonder%20[Converted].png" --admin-password '$$2y$$05$$9Vw9X2BC5sM5BRNZ8arAe.4FAoJk8Vxtjd9tQ/8sHEAQ30hdkcKuy'
     configs:
       - source: endpoints
         target: /endpoints/endpoints.json
@@ -31,10 +31,6 @@ services:
       replicas: 1
       placement:
         constraints: [node.role == manager]
-      labels:
-        - "admin-password=$$2y$$05$$9Vw9X2BC5sM5BRNZ8arAe.4FAoJk8Vxtjd9tQ/8sHEAQ30hdkcKuy"
-        - "logo=https://img.maartenmol.nl/DHS_White%20zonder%20[Converted].png"
-        - "external-endpoints=/endpoints/endpoints.json"
 
 configs:
   endpoints:
