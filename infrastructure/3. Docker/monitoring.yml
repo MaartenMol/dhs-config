@@ -225,6 +225,11 @@ services:
     image: pryorda/vmware_exporter:v0.11.1
     networks:
       - net
+    ports:
+      - target: 9272
+        published: 9272
+        protocol: tcp
+        mode: ingress
     environment:
         VSPHERE_HOST: "172.27.72.3"
         VSPHERE_USER: "administrator@vpshere.local"
