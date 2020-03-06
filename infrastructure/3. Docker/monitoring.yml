@@ -25,6 +25,10 @@ configs:
     file: ./config/karma.yaml
   datasource:
     file: ./config/datasource.yml
+  dashboard:
+    file: ./config/dashboard.yml
+  linux-node:
+    file: ./config/grafana_linux-node.json
 
 services:
   cadvisor:
@@ -69,6 +73,10 @@ services:
         target: /etc/grafana/ldap.toml
       - source: datasource
         target: /etc/grafana/provisioning/datasources/datasource.yml
+      - source: dashboard
+        target: /etc/grafana/provisioning/dashboards/dashboard.yml
+      - source: linux-node
+        target: /etc/grafana/provisioning/dashboards/grafana_linux-node.json
     environment:
       TZ: Europe/Amsterdam
       GF_EXTERNAL_IMAGE_STORAGE_PROVIDER: local
