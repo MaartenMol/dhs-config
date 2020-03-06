@@ -221,6 +221,26 @@ services:
         reservations:
           memory: 64M
 
+  vmware_exporter:
+    image: pryorda/vmware_exporter:v0.11.1
+    networks:
+      - net
+    environment:
+        VSPHERE_HOST: "172.27.72.3"
+        VSPHERE_USER: "administrator@vpshere.local"
+        VSPHERE_PASSWORD: "VD!fli9ht"
+        VSPHERE_IGNORE_SSL: "True"
+        VSPHERE_COLLECT_VMS: "False"
+        VSPHERE_COLLECT_VMGUESTS: "False"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+
   prometheus:
     image: prom/prometheus:v2.16.0
     networks:
