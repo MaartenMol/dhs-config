@@ -21,6 +21,8 @@ configs:
     file: ./config/swarm_node.rules.yml
   task_rules:
     file: ./config/swarm_task.rules.yml
+  karma:
+    file: ./config/karma.yaml
 
 services:
   cadvisor:
@@ -171,8 +173,11 @@ services:
         published: 8080
         protocol: tcp
         mode: ingress
+    configs:
+      - source: karma
+        target: /data/config.yaml
     environment:
-      ALERTMANAGER_URIS: http://alertmanager.dhsnext.nl:9093
+      CONFIG_FILE: "/data/config.yaml"
     deploy:
       mode: replicated
       replicas: 1

@@ -1,0 +1,10 @@
+alertmanager:
+  interval: 10s
+  servers:
+    - name: PROMETHEUS
+      uri: http://vip.dhsnext.nl/:9093
+      timeout: 30s
+      proxy: true
+log:
+  config: true
+  level: debug
