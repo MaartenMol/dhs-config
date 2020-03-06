@@ -167,7 +167,7 @@ services:
         protocol: tcp
         mode: ingress
     environment:
-      ALERTMANAGER_URIS=http://alertmanager:9093
+      ALERTMANAGER_URIS: http://alertmanager:9093
     deploy:
       mode: replicated
       replicas: 1
