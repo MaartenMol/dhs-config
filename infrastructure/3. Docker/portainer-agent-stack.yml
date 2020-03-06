@@ -32,7 +32,7 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        - "admin-password=$2y$05$9Vw9X2BC5sM5BRNZ8arAe.4FAoJk8Vxtjd9tQ/8sHEAQ30hdkcKuy"
+        - "admin-password=$$2y$$05$$9Vw9X2BC5sM5BRNZ8arAe.4FAoJk8Vxtjd9tQ/8sHEAQ30hdkcKuy"
         - "logo=https://img.maartenmol.nl/DHS_White%20zonder%20[Converted].png"
         - "external-endpoints=/endpoints/endpoints.json"
 
