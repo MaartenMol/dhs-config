@@ -232,7 +232,7 @@ services:
         mode: ingress
     environment:
         VSPHERE_HOST: "172.27.72.3"
-        VSPHERE_USER: "administrator@vpshere.local"
+        VSPHERE_USER: "administrator@vsphere.local"
         VSPHERE_PASSWORD: "VD!fli9ht"
         VSPHERE_IGNORE_SSL: "True"
         VSPHERE_COLLECT_VMS: "False"
