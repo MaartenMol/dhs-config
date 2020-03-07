@@ -18,8 +18,13 @@ data "vsphere_compute_cluster" "cluster" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-data "vsphere_datastore" "datastore" {
+data "vsphere_datastore" "datastore-02" {
   name          = "VNX-LUN02-PROD"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_datastore" "datastore-01" {
+  name          = "VNX-LUN01-PROD"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
@@ -36,7 +41,7 @@ data "vsphere_virtual_machine" "template" {
 resource "vsphere_virtual_machine" "ANSIBLE-AWX" {
   name                  = "ANSIBLE-AWX.DHSNEXT.nl"
   resource_pool_id      = data.vsphere_compute_cluster.cluster.resource_pool_id
-  datastore_id          = data.vsphere_datastore.datastore.id
+  datastore_id          = data.vsphere_datastore.datastore-02.id
   folder                = "ConfigManagement"
 
   num_cpus              = 4
@@ -79,37 +84,13 @@ resource "vsphere_virtual_machine" "ANSIBLE-AWX" {
       dns_suffix_list   = ["DHSNEXT.nl"]
     }
   }
-   provisioner "remote-exec" {
-    inline = [
-      "dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo && dnf list docker-ce",
-      "dnf install docker-ce --nobest -y && systemctl disable firewalld && systemctl stop firewalld && systemctl enable docker && systemctl start docker",
-      "dnf install curl nano -y && curl -L 'https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose",
-      "dnf install python3 -y && dnf install python3-pip -y && dnf install epel-release -y && dnf install ansible -y",
-      "dnf install git gcc gcc-c++ nodejs gettext device-mapper-persistent-data lvm2 bzip2 python3-pip -y",
-      "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose ansible-tower-cli",
-      "git clone https://github.com/ansible/awx.git ~/awx",
-      "wget --timeout=1 --tries=3 https://raw.githubusercontent.com/MaartenMol/dhs-config/master/ansible-awx/inventory?token=AC4QWR7K7TI6QEB5J5QLRLC6MD64Q -O ~/inventory",
-      "docker run -d -p 9001:9001 --name=portainer_agent --restart=always -v /var/run/docker.sock:/var/run/docker.sock portainer/agent",
-      "docker run -d -p 9100:9100 --name=node_exporter -v '/proc:/host/proc' -v '/sys:/host/sys' -v '/:/rootfs' -v '/etc/hostname:/etc/nodename' --net='host' prom/node-exporter --path.sysfs /host/sys --path.procfs /host/proc --collector.filesystem.ignored-mount-points '^/(sys|proc|dev|host|etc)($$|/)' --no-collector.ipvs",
-      "docker run -d -p 8080:8080 --name=cadvisor -v '/:/rootfs:ro' -v '/var/run:/var/run:ro' -v '/sys:/sys:ro' -v '/var/lib/docker/:/var/lib/docker:ro' -v '/dev/disk/:/dev/disk:ro' google/cadvisor",
-      "cd ~ && ansible-playbook -i inventory awx/installer/install.yml",
-      "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
-      "chmod 600 ~/.ssh/authorized_keys"
-    ]
-    connection {
-      type        = "ssh"
-      host        = "172.27.72.60"
-      user        = "root"
-      password    = "P@ssword"
-    }
-  }
 }
 
 resource "vsphere_virtual_machine" "DOCKER-01" {
   depends_on            = [vsphere_virtual_machine.DOCKER-02, vsphere_virtual_machine.DOCKER-03]
   name                  = "DOCKER-01.DHSNEXT.nl"
   resource_pool_id      = data.vsphere_compute_cluster.cluster.resource_pool_id
-  datastore_id          = data.vsphere_datastore.datastore.id
+  datastore_id          = data.vsphere_datastore.datastore-01.id
   folder                = "ConfigManagement"
 
   num_cpus              = 4
@@ -152,37 +133,12 @@ resource "vsphere_virtual_machine" "DOCKER-01" {
       dns_suffix_list   = ["DHSNEXT.nl"]
     }
   }
-   provisioner "remote-exec" {
-    inline = [
-      "dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo && dnf list docker-ce",
-      "dnf install docker-ce --nobest -y && systemctl disable firewalld && systemctl stop firewalld && systemctl enable docker && systemctl start docker",
-      "dnf install curl nano -y && curl -L 'https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose",
-      "dnf install python3 -y && dnf install python3-pip -y && dnf install epel-release -y && dnf install ansible -y",
-      "dnf install git gcc gcc-c++ nodejs gettext device-mapper-persistent-data lvm2 bzip2 python3-pip -y",
-      "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose jsondiff",
-      "git clone https://github.com/MaartenMol/dhs-config.git ~/dhs-config",
-      "export ANSIBLE_HOST_KEY_CHECKING=False",
-      "cd ~/dhs-config/infrastructure/2.\\ Ansible/ && ansible-playbook -i inventory runbook.yml",
-      "cd ~/dhs-config/infrastructure/2.\\ Ansible/ && ansible-playbook -i inventory runbook.yml",
-      "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
-      "chmod 600 ~/.ssh/authorized_keys",
-      "wget https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz && tar -xzvf node_exporter-0.18.1.linux-amd64.tar.gz && mv node_exporter-0.18.1.linux-amd64 node_exporter",
-      "curl https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/node_exporter.service > /etc/systemd/system/node_exporter.service",
-      "systemctl daemon-reload && systemctl start node_exporter && systemctl enable node_exporter"
-    ]
-    connection {
-      type        = "ssh"
-      host        = "172.27.72.61"
-      user        = "root"
-      password    = "P@ssword"
-    }
-  }
 }
 
 resource "vsphere_virtual_machine" "DOCKER-02" {
   name                  = "DOCKER-02.DHSNEXT.nl"
   resource_pool_id      = data.vsphere_compute_cluster.cluster.resource_pool_id
-  datastore_id          = data.vsphere_datastore.datastore.id
+  datastore_id          = data.vsphere_datastore.datastore-02.id
   folder                = "ConfigManagement"
 
   num_cpus              = 4
@@ -225,31 +181,12 @@ resource "vsphere_virtual_machine" "DOCKER-02" {
       dns_suffix_list   = ["DHSNEXT.nl"]
     }
   }
-  provisioner "remote-exec" {
-    inline = [
-      "dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo && dnf list docker-ce",
-      "dnf install docker-ce --nobest -y && systemctl disable firewalld && systemctl stop firewalld && systemctl enable docker && systemctl start docker",
-      "dnf install python3 python3-pip -y",
-      "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose",
-      "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
-      "chmod 600 ~/.ssh/authorized_keys",
-      "wget https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz && tar -xzvf node_exporter-0.18.1.linux-amd64.tar.gz && mv node_exporter-0.18.1.linux-amd64 node_exporter",
-      "curl https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/node_exporter.service > /etc/systemd/system/node_exporter.service",
-      "systemctl daemon-reload && systemctl start node_exporter && systemctl enable node_exporter"
-    ]
-    connection {
-      type        = "ssh"
-      host        = "172.27.72.62"
-      user        = "root"
-      password    = "P@ssword"
-    }
-  } 
 }
 
 resource "vsphere_virtual_machine" "DOCKER-03" {
   name                  = "DOCKER-03.DHSNEXT.nl"
   resource_pool_id      = data.vsphere_compute_cluster.cluster.resource_pool_id
-  datastore_id          = data.vsphere_datastore.datastore.id
+  datastore_id          = data.vsphere_datastore.datastore-02.id
   folder                = "ConfigManagement"
 
   num_cpus              = 4
@@ -292,31 +229,12 @@ resource "vsphere_virtual_machine" "DOCKER-03" {
       dns_suffix_list   = ["DHSNEXT.nl"]
     }
   }
-  provisioner "remote-exec" {
-    inline = [
-      "dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo && dnf list docker-ce",
-      "dnf install docker-ce --nobest -y && systemctl disable firewalld && systemctl stop firewalld && systemctl enable docker && systemctl start docker",
-      "dnf install python3 python3-pip -y",
-      "alternatives --set python /usr/bin/python3 && pip3 install docker docker-compose",
-      "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
-      "chmod 600 ~/.ssh/authorized_keys",
-      "wget https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz && tar -xzvf node_exporter-0.18.1.linux-amd64.tar.gz && mv node_exporter-0.18.1.linux-amd64 node_exporter",
-      "curl https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/node_exporter.service > /etc/systemd/system/node_exporter.service",
-      "systemctl daemon-reload && systemctl start node_exporter && systemctl enable node_exporter"
-    ]
-    connection {
-      type        = "ssh"
-      host        = "172.27.72.63"
-      user        = "root"
-      password    = "P@ssword"
-    }
-  } 
 }
 
 resource "vsphere_virtual_machine" "LB-01" {
   name                  = "LB-01.DHSNEXT.nl"
   resource_pool_id      = data.vsphere_compute_cluster.cluster.resource_pool_id
-  datastore_id          = data.vsphere_datastore.datastore.id
+  datastore_id          = data.vsphere_datastore.datastore-01.id
   folder                = "ConfigManagement"
 
   num_cpus              = 2
@@ -359,31 +277,12 @@ resource "vsphere_virtual_machine" "LB-01" {
       dns_suffix_list   = ["DHSNEXT.nl"]
     }
   }
-  provisioner "remote-exec" {
-    inline = [
-      "dnf install -y gcc kernel-headers kernel-devel && dnf install -y haproxy keepalived",
-      "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/haproxy.cfg -O /etc/haproxy/haproxy.cfg",
-      "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/keepalived-master.conf -O /etc/keepalived/keepalived.conf",
-      "systemctl enable keepalived && systemctl start keepalived && systemctl enable haproxy && systemctl start haproxy",
-      "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
-      "chmod 600 ~/.ssh/authorized_keys",
-      "wget https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz && tar -xzvf node_exporter-0.18.1.linux-amd64.tar.gz && mv node_exporter-0.18.1.linux-amd64 node_exporter",
-      "curl https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/node_exporter.service > /etc/systemd/system/node_exporter.service",
-      "systemctl daemon-reload && systemctl start node_exporter && systemctl enable node_exporter"
-    ]
-    connection {
-      type        = "ssh"
-      host        = "172.27.72.65"
-      user        = "root"
-      password    = "P@ssword"
-    }
-  } 
 }
 
 resource "vsphere_virtual_machine" "LB-02" {
   name                  = "LB-02.DHSNEXT.nl"
   resource_pool_id      = data.vsphere_compute_cluster.cluster.resource_pool_id
-  datastore_id          = data.vsphere_datastore.datastore.id
+  datastore_id          = data.vsphere_datastore.datastore-02.id
   folder                = "ConfigManagement"
 
   num_cpus              = 2
@@ -426,21 +325,75 @@ resource "vsphere_virtual_machine" "LB-02" {
       dns_suffix_list   = ["DHSNEXT.nl"]
     }
   }
+}
+
+resource "vsphere_virtual_machine" "HOPHOP" {
+  name                  = "HOPHOP.DHSNEXT.nl"
+  depends_on            = [
+                            vsphere_virtual_machine.ANSIBLE-AWX,
+                            vsphere_virtual_machine.DOCKER-01,
+                            vsphere_virtual_machine.DOCKER-02,
+                            vsphere_virtual_machine.DOCKER-03,
+                            vsphere_virtual_machine.LB-01,
+                            vsphere_virtual_machine.LB-02
+                          ]
+  resource_pool_id      = data.vsphere_compute_cluster.cluster.resource_pool_id
+  datastore_id          = data.vsphere_datastore.datastore-02.id
+  folder                = "ConfigManagement"
+
+  num_cpus              = 2
+  num_cores_per_socket  = 2
+  memory                = 2048
+  guest_id              = data.vsphere_virtual_machine.template.guest_id
+  firmware              = data.vsphere_virtual_machine.template.firmware
+
+  scsi_type             = data.vsphere_virtual_machine.template.scsi_type
+
+  network_interface {
+    network_id          = data.vsphere_network.network.id
+    adapter_type        = data.vsphere_virtual_machine.template.network_interface_types[0]
+  }
+
+  disk {
+    label               = "disk0"
+    size                = data.vsphere_virtual_machine.template.disks.0.size
+    eagerly_scrub       = data.vsphere_virtual_machine.template.disks.0.eagerly_scrub
+    thin_provisioned    = data.vsphere_virtual_machine.template.disks.0.thin_provisioned
+  }
+
+  clone {
+    template_uuid       = data.vsphere_virtual_machine.template.id
+    linked_clone        = "false"
+
+    customize {
+      linux_options {
+        host_name       = "HOPHOP"
+        domain          = "DHSNEXT.nl"
+      }
+
+      network_interface {
+        ipv4_address    = "172.27.72.69"
+        ipv4_netmask    = 24
+      }
+
+      ipv4_gateway      = "172.27.72.1"
+      dns_server_list   = ["172.27.72.4"]
+      dns_suffix_list   = ["DHSNEXT.nl"]
+    }
+  }
   provisioner "remote-exec" {
     inline = [
-      "dnf install -y gcc kernel-headers kernel-devel && dnf install -y haproxy keepalived",
-      "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/haproxy.cfg -O /etc/haproxy/haproxy.cfg",
-      "wget https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/keepalived-slave.conf -O /etc/keepalived/keepalived.conf",
-      "systemctl enable keepalived && systemctl start keepalived && systemctl enable haproxy && systemctl start haproxy",
       "mkdir ~/.ssh && curl https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey > ~/.ssh/authorized_keys",
       "chmod 600 ~/.ssh/authorized_keys",
-      "wget https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz && tar -xzvf node_exporter-0.18.1.linux-amd64.tar.gz && mv node_exporter-0.18.1.linux-amd64 node_exporter",
-      "curl https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/node_exporter.service > /etc/systemd/system/node_exporter.service",
-      "systemctl daemon-reload && systemctl start node_exporter && systemctl enable node_exporter"
+      "dnf install -y git ansible",
+      "git clone https://github.com/MaartenMol/dhs-config.git /root/dhs-config",
+      "export ANSIBLE_HOST_KEY_CHECKING=False",
+      "cd /root/dhs-config/infrastructure/2.\\ Ansible/ && ansible-playbook -i inventory runbook.yml",
+      "cd /root/dhs-config/infrastructure/2.\\ Ansible/ && ansible-playbook -i inventory runbook.yml"
     ]
     connection {
       type        = "ssh"
-      host        = "172.27.72.66"
+      host        = "172.27.72.69"
       user        = "root"
       password    = "P@ssword"
     }
