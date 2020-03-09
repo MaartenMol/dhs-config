@@ -3,10 +3,6 @@
   hosts: centos
   gather_facts: no
   tasks:
-    - name: Upgrade all DNF packages
-      dnf:
-        name: "*"
-        state: latest
     - name: Install required DNF packages
       dnf:
         name:
