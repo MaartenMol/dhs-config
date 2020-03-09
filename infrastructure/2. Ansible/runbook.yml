@@ -23,6 +23,10 @@
         name: firewalld
         enabled: no
         state: stopped
+    - name: Create the SSH directory if it does not exist
+      file:
+        path: /root/.ssh
+        state: directory
     - name: Install MMOL Public Key
       get_url:
         url: https://gist.githubusercontent.com/MaartenMol/326668e09d73e4bd43c8e0b0dd22083b/raw/c07f870e79502efa9bd1e4f568d669cfccd32324/PublicKey
@@ -37,7 +41,7 @@
         dest: /opt/node_exporter-0.18.1.linux-amd64.tar.gz
         mode: '0755'
     - name: Untar node_exporter
-      shell: tar -xzvf /opt/node_exporter-0.18.1.linux-amd64.tar.gz
+      shell: tar -xzvf /opt/node_exporter-0.18.1.linux-amd64.tar.gz -C /opt
     - name: Move node_exporter
       shell: mv /opt/node_exporter-0.18.1.linux-amd64/node_exporter /usr/local/bin/node_exporter
     - name: Set run permissions node_exporter
