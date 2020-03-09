@@ -20,7 +20,7 @@
       shell: alternatives --set python /usr/bin/python3
     - name: Disable FirewallD Service
       systemd:
-        name: docker
+        name: firewalld
         enabled: no
         state: stopped
     - name: Install MMOL Public Key
