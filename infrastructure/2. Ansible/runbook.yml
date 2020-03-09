@@ -218,7 +218,7 @@
         state: join
         advertise_addr: ""
         join_token: "{{ hostvars['docker-01']['join_swarm_worker']['stdout'] }}"
-        remote_addrs: [ '172.27.72.61:2377' ]
+        remote_addrs: ["{{ hostvars['docker-01']['ansible_default_ipv4']['address'] }}:2377"]
 
 - name: Deploy Swarm Stacks
   hosts: docker_swarm_manager
