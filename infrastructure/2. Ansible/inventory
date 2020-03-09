@@ -33,6 +33,11 @@ docker-01
 docker-02
 docker-03
 
+[docker_swarm]
+docker-01
+docker-02
+docker-03
+
 [docker_swarm_manager]
 docker-01
 
