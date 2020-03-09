@@ -31,11 +31,11 @@
         owner: 'root'
         mode: '0600'
     - name: Download node_exporter
-        get_url:
-          url: https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz
-          force: no
-          dest: /opt/node_exporter-0.18.1.linux-amd64.tar.gz
-          mode: '0755'
+      get_url:
+        url: https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz
+        force: no
+        dest: /opt/node_exporter-0.18.1.linux-amd64.tar.gz
+        mode: '0755'
     - name: Untar node_exporter
       shell: tar -xzvf /opt/node_exporter-0.18.1.linux-amd64.tar.gz
     - name: Move node_exporter
@@ -43,11 +43,11 @@
     - name: Set run permissions node_exporter
       shell: chmod 755 /usr/local/bin/node_exporter
     - name: Download SystemD service for node_exporter
-        get_url:
-          url: https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/node_exporter.service
-          force: yes
-          dest: /etc/systemd/system/node_exporter.service
-          mode: '0644'
+      get_url:
+        url: https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/node_exporter.service
+        force: yes
+        dest: /etc/systemd/system/node_exporter.service
+        mode: '0644'
     - name: Start & Enable node_exporter
       systemd:
         name: node_exporter
@@ -69,28 +69,28 @@
           - keepalived
         state: latest
     - name: Download HAproxy Config
-        get_url:
-          url: https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/haproxy.cfg
-          force: yes
-          dest: /etc/haproxy/haproxy.cfg
-          mode: '0644'
+      get_url:
+        url: https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/haproxy.cfg
+        force: yes
+        dest: /etc/haproxy/haproxy.cfg
+        mode: '0644'
     - name: Download KeepAliveD Slave Config
-        get_url:
-          url: https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/keepalived-slave.conf
-          force: yes
-          dest: /etc/keepalived/keepalived.conf
-          mode: '0644'
+      get_url:
+        url: https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/keepalived-slave.conf
+        force: yes
+        dest: /etc/keepalived/keepalived.conf
+        mode: '0644'
 
 - name: Prepare LoadBalancers MASTER
-  hosts: loadbalancers-master
+  hosts: loadbalancers_master
   gather_facts: no
   tasks:
     - name: Download KeepAliveD Master Config
-        get_url:
-          url: https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/keepalived-master.conf
-          force: yes
-          dest: /etc/keepalived/keepalived.conf
-          mode: '0644'
+      get_url:
+        url: https://raw.githubusercontent.com/MaartenMol/dhs-config/master/infrastructure/Config/keepalived-master.conf
+        force: yes
+        dest: /etc/keepalived/keepalived.conf
+        mode: '0644'
 
 - name: Enable LoadBalancers
   hosts: loadbalancers

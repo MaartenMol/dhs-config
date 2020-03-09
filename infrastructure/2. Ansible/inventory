@@ -24,7 +24,7 @@ hophop
 lb-01
 lb-02
 
-[loadbalancers-master]
+[loadbalancers_master]
 lb-01
 
 [dockers]
