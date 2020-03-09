@@ -12,3 +12,6 @@
 
 ## Start deployment with Terraform
 ````terraform apply -var="vsphere-password=P@ssword"````
+
+## Infrastructure
+![](https://img.maartenmol.nl/ansible.png)
