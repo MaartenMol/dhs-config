@@ -87,7 +87,6 @@ resource "vsphere_virtual_machine" "ANSIBLE-AWX" {
 }
 
 resource "vsphere_virtual_machine" "DOCKER-01" {
-  depends_on            = [vsphere_virtual_machine.DOCKER-02, vsphere_virtual_machine.DOCKER-03]
   name                  = "DOCKER-01.DHSNEXT.nl"
   resource_pool_id      = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id          = data.vsphere_datastore.datastore-01.id
