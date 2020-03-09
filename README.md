@@ -9,3 +9,6 @@
 * lb-02 -> 172.27.72.66
 * hophop -> 172.27.72.69
 * vip, grafana, awx, portainer, karma, kibana -> 172.27.72.67
+
+## Start deployment with Terraform
+````terraform apply -var="vsphere-password=P@ssword"````
