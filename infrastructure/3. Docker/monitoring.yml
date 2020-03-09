@@ -28,7 +28,7 @@ configs:
   dashboard:
     file: ./config/dashboard.yml
   linux-node:
-    file: ./config/grafana_linux-node.json
+    file: ./config/grafana_linux-nodes.json
 
 services:
   cadvisor:
@@ -76,7 +76,7 @@ services:
       - source: dashboard
         target: /etc/grafana/provisioning/dashboards/dashboard.yml
       - source: linux-node
-        target: /etc/grafana/provisioning/dashboards/grafana_linux-node.json
+        target: /etc/grafana/provisioning/dashboards/grafana_linux-nodes.json
     environment:
       TZ: Europe/Amsterdam
       GF_EXTERNAL_IMAGE_STORAGE_PROVIDER: local
