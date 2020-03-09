@@ -238,7 +238,7 @@ services:
         VSPHERE_USER: "administrator@vsphere.local"
         VSPHERE_PASSWORD: "VD!fli9ht"
         VSPHERE_IGNORE_SSL: "True"
-        VSPHERE_COLLECT_VMS: "False"
+        VSPHERE_COLLECT_VMS: "True"
         VSPHERE_COLLECT_VMGUESTS: "False"
     deploy:
       mode: replicated
