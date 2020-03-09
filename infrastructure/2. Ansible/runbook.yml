@@ -128,7 +128,6 @@
         state: latest
     - name: Add Docker CE REPO
       shell: dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo && dnf list docker-ce
-      warn: false
     - name: Install Docker CE
       shell: dnf install docker-ce --nobest -y
     - name: Enable Docker CE Service
