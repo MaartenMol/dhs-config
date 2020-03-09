@@ -136,12 +136,13 @@
         url: https://github.com/docker/compose/releases/download/1.25.4/docker-compose-Linux-x86_64
         dest: /usr/local/bin/docker-compose
         mode: '0755'
-    - pip:
-      state: latest
-      name:
-        - docker 
-        - docker-compose
-        - jsondiff
+    - name: Install PIP Packages
+      pip:
+        state: latest
+        name:
+          - docker 
+          - docker-compose
+          - jsondiff
 
 - name: Prepare Ansible AWX Host
   hosts: ansible-awx
@@ -152,10 +153,11 @@
         name:
           - ansible
         state: latest
-    - pip:
-      state: latest
-      name:
-        - ansible-tower-cli
+    - name: Install Ansible Tower CLI
+      pip:
+        state: latest
+        name:
+          - ansible-tower-cli
     - name: GIT Clone Ansible AWX
       git:
         repo: 'https://github.com/ansible/awx.git'
