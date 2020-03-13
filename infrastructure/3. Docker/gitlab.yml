@@ -1,0 +1,134 @@
+version: "3.4"
+
+networks:
+  net:
+    driver: overlay
+    attachable: true
+
+volumes:
+  redis-data:
+    driver_opts:
+      type: "nfs"
+      o: "addr=172.27.72.20,nolock,rw"
+      device: ":/mnt/POOL-01/DOCKERVOLS/gitlab_redis"
+  postgresql-data:
+    driver_opts:
+      type: "nfs"
+      o: "addr=172.27.72.20,nolock,rw"
+      device: ":/mnt/POOL-01/DOCKERVOLS/gitlab_postgresql"
+  gitlab-data:
+    driver_opts:
+      type: "nfs"
+      o: "addr=172.27.72.20,nolock,rw"
+      device: ":/mnt/POOL-01/DOCKERVOLS/gitlab"
+
+services:
+
+  redis:
+    image: redis
+    volumes:
+      - redis-data:/var/lib/redis:Z
+    networks:
+      - net
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+
+  postgresql:
+    image: sameersbn/postgresql:10-2
+    volumes:
+      - postgresql-data:/var/lib/postgresql:Z
+    networks:
+      - net
+    environment:
+      - DB_USER=gitlab
+      - DB_PASS=P@ssword
+      - DB_NAME=gitlab_dhs
+      - DB_EXTENSION=pg_trgm
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      resources:
+        limits:
+          memory: 2048M
+        reservations:
+          memory: 128M
+
+  gitlab:
+    image: sameersbn/gitlab:12.7.7
+    networks:
+      - net
+    ports:
+      - target: 80
+        published: 10080
+        protocol: tcp
+        mode: ingress
+      - target: 22
+        published: 10022
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - gitlab-data:/home/git/data:Z
+    environment:
+      - DEBUG=false
+      - DB_ADAPTER=postgresql
+      - DB_HOST=postgresql
+      - DB_PORT=5432
+      - DB_USER=gitlab
+      - DB_PASS=P@ssword
+      - DB_NAME=gitlab_dhs
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - TZ=Europe/Amsterdam
+      - GITLAB_TIMEZONE=Amsterdam
+      - GITLAB_HTTPS=false
+      - SSL_SELF_SIGNED=false
+      - GITLAB_HOST=gitlab.dhsnext.nl
+      - GITLAB_PORT=10080
+      - GITLAB_SSH_PORT=10022
+      - GITLAB_SECRETS_DB_KEY_BASE=W7LbfXvVFRMv7TdwwpzCJKbTLXzjhgPFsTMhjcdwcLXqLJNwbtsLWtRcrT3Fjvgq
+      - GITLAB_SECRETS_SECRET_KEY_BASE=RThN4N4ChLFNdPMr3nkxzxLHmxJ7M3dpzkmhTptgsnwqPRdzw3PnWkN4vbgmwptq
+      - GITLAB_SECRETS_OTP_KEY_BASE=Vq3vNbwxHX9pzpxKbwn7cbsXdmdwfvKdgqWzmWrTvWdwMnKkj3nW4KFTrRMdngXT
+      - GITLAB_ROOT_PASSWORD=P@ssword
+      - GITLAB_ROOT_EMAIL=gitlab@dhsnext.nl
+      - GITLAB_BACKUP_SCHEDULE=daily
+      - GITLAB_BACKUP_TIME=01:00
+      - LDAP_ENABLED=true
+      - LDAP_LABEL=DHSNEXT
+      - LDAP_HOST=172.27.72.4
+      - LDAP_PORT=389
+      - LDAP_UID=sAMAccountName
+      - LDAP_METHOD=plain
+      - LDAP_ACTIVE_DIRECTORY=true
+      - LDAP_BIND_DN=CN=administrator,OU=Users,DC=dhsnext,DC=nl
+      - LDAP_PASS=VD!fli9ht
+      - LDAP_BASE=dc=dhsnext,dc=nl
+      - LDAP_LOWERCASE_USERNAMES=true
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      resources:
+        limits:
+          memory: 2048M
+        reservations:
+          memory: 128M
