@@ -11,6 +11,7 @@
           - python3-pip
           - epel-release
           - git
+          - nfs-utils
         state: latest
     - name: Making sure Python 3 is the main Python interpreter
       shell: alternatives --set python /usr/bin/python3
@@ -54,6 +55,21 @@
         daemon_reload: yes
         enabled: yes
         state: started
+
+- name: Prepare HOPHOP
+  hosts: management
+  gather_facts: no
+  tasks:
+    - name: Create the NFS directory if it does not exist
+      file:
+        path: /nfs
+        state: directory
+    - name: Mount NFS share
+      mount:
+        path: /nfs
+        src: 172.27.72.20:/mnt/POOL-01/DOCKERVOLS
+        fstype: nfs
+        state: mounted
 
 - name: Prepare LoadBalancers
   hosts: loadbalancers
