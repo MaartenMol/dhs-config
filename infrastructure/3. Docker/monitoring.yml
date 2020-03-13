@@ -249,6 +249,23 @@ services:
         max_attempts: 3
         window: 10s
 
+  nexus_exporter:
+    image: ocadotechnology/nexus-exporter:0.2.2
+    networks:
+      - net
+    environment:
+        NEXUS_HOST: "http://nexus.dhsnext.nl"
+        NEXUS_USERNAME: "admin"
+        NEXUS_ADMIN_PASSWORD: "P@ssword"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+
   prometheus:
     image: prom/prometheus:v2.16.0
     networks:
