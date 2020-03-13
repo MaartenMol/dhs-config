@@ -8,19 +8,19 @@ networks:
 volumes:
     prometheus:
       driver_opts:
-      type: "nfs"
-      o: "addr=172.27.72.20,nolock,rw"
-      device: ":/mnt/POOL-01/DOCKERVOLS/prometheus"
+        type: "nfs"
+        o: "addr=172.27.72.20,nolock,rw"
+        device: ":/mnt/POOL-01/DOCKERVOLS/prometheus"
     grafana:
       driver_opts:
-      type: "nfs"
-      o: "addr=172.27.72.20,nolock,rw"
-      device: ":/mnt/POOL-01/DOCKERVOLS/grafana"
+        type: "nfs"
+        o: "addr=172.27.72.20,nolock,rw"
+        device: ":/mnt/POOL-01/DOCKERVOLS/grafana"
     alertmanager:
       driver_opts:
-      type: "nfs"
-      o: "addr=172.27.72.20,nolock,rw"
-      device: ":/mnt/POOL-01/DOCKERVOLS/alertmanager"
+        type: "nfs"
+        o: "addr=172.27.72.20,nolock,rw"
+        device: ":/mnt/POOL-01/DOCKERVOLS/alertmanager"
 
 configs:
   alertmanager:

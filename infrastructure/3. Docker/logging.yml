@@ -20,9 +20,9 @@ configs:
 volumes:
     elasticsearch:
       driver_opts:
-      type: "nfs"
-      o: "addr=172.27.72.20,nolock,rw"
-      device: ":/mnt/POOL-01/DOCKERVOLS/elasticsearch"
+        type: "nfs"
+        o: "addr=172.27.72.20,nolock,rw"
+        device: ":/mnt/POOL-01/DOCKERVOLS/elasticsearch"
 
 services:
   elasticsearch:
