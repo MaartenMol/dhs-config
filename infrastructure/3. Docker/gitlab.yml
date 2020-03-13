@@ -112,7 +112,7 @@ services:
       - LDAP_LABEL=DHSNEXT
       - LDAP_HOST=172.27.72.4
       - LDAP_PORT=389
-      - LDAP_UID=sAMAccountName
+      - LDAP_UID=sAMAccountName=
       - LDAP_METHOD=plain
       - LDAP_ACTIVE_DIRECTORY=true
       - LDAP_BIND_DN=CN=Administrator,CN=Users,DC=dhsnext,DC=local
