@@ -122,6 +122,13 @@ services:
       - LDAP_ALLOW_USERNAME_OR_EMAIL_LOGIN=true
       - LDAP_USER_ATTRIBUTE_USERNAME=['uid', 'sAMAccountName']
       - LDAP_USER_FILTER=(memberOf=CN=GIT,OU=Groups,DC=dhsnext,DC=nl)
+      - GITLAB_DEFAULT_THEME=7
+      - GITLAB_SIGNUP_ENABLED=false
+      - GITLAB_PROJECTS_WIKI=false
+      - GITLAB_PROJECTS_SNIPPETS=false
+      - GITLAB_PROJECTS_BUILDS=false
+      - GITLAB_PROJECTS_CONTAINER_REGISTRY=false
+      - GITLAB_REGISTRY_HOST=gitlab.dhsnext.nl
     deploy:
       mode: replicated
       replicas: 1
