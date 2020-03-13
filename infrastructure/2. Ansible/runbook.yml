@@ -262,3 +262,15 @@
         name: logging
         compose:
           - /root/dhs-config/infrastructure/3. Docker/logging.yml
+    - name: Deploy GitLab
+      docker_stack:
+        state: present
+        name: gitlab
+        compose:
+          - /root/dhs-config/infrastructure/3. Docker/gitlab.yml
+    - name: Deploy Nexus3
+      docker_stack:
+        state: present
+        name: nexus
+        compose:
+          - /root/dhs-config/infrastructure/3. Docker/nexus.yml
