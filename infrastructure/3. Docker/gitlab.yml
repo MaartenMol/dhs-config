@@ -115,10 +115,11 @@ services:
       - LDAP_UID=sAMAccountName
       - LDAP_METHOD=plain
       - LDAP_ACTIVE_DIRECTORY=true
-      - LDAP_BIND_DN=CN=Administrator,OU=Users,DC=dhsnext,DC=nl
+      - LDAP_BIND_DN=CN=Administrator,CN=Users,DC=dhsnext,DC=local
       - LDAP_PASS=VD!fli9ht
-      - LDAP_BASE=OU=Users,DC=dhsnext,DC=nl
+      - LDAP_BASE=DC=dhsnext,DC=local
       - LDAP_LOWERCASE_USERNAMES=true
+      - LDAP_ALLOW_USERNAME_OR_EMAIL_LOGIN=true
     deploy:
       mode: replicated
       replicas: 1
