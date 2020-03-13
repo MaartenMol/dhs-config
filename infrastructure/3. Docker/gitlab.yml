@@ -115,11 +115,12 @@ services:
       - LDAP_UID=sAMAccountName
       - LDAP_METHOD=plain
       - LDAP_ACTIVE_DIRECTORY=true
-      - LDAP_BIND_DN=administrator@dhsnext.nl
+      - LDAP_BIND_DN=CN=Administrator,CN=Users,DC=dhsnext,DC=local
       - LDAP_PASS=VD!fli9ht
       - LDAP_BASE=DC=dhsnext,DC=local
       - LDAP_LOWERCASE_USERNAMES=true
       - LDAP_ALLOW_USERNAME_OR_EMAIL_LOGIN=true
+      - LDAP_USER_ATTRIBUTE_USERNAME=['uid', 'sAMAccountName']
     deploy:
       mode: replicated
       replicas: 1
