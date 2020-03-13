@@ -6,7 +6,11 @@ networks:
     attachable: true
 
 volumes:
-  portainer_data: {}
+  portainer_data:
+    driver_opts:
+      type: "nfs"
+      o: "addr=172.27.72.20,nolock,rw"
+      device: ":/mnt/POOL-01/DOCKERVOLS/portainer"
 
 services:
   agent:

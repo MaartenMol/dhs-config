@@ -6,9 +6,21 @@ networks:
     attachable: true
 
 volumes:
-    prometheus: {}
-    grafana: {}
-    alertmanager: {}
+    prometheus:
+      driver_opts:
+      type: "nfs"
+      o: "addr=172.27.72.20,nolock,rw"
+      device: ":/mnt/POOL-01/DOCKERVOLS/prometheus"
+    grafana:
+      driver_opts:
+      type: "nfs"
+      o: "addr=172.27.72.20,nolock,rw"
+      device: ":/mnt/POOL-01/DOCKERVOLS/grafana"
+    alertmanager:
+      driver_opts:
+      type: "nfs"
+      o: "addr=172.27.72.20,nolock,rw"
+      device: ":/mnt/POOL-01/DOCKERVOLS/alertmanager"
 
 configs:
   alertmanager:

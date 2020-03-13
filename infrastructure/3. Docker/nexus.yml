@@ -6,7 +6,11 @@ networks:
     attachable: true
 
 volumes:
-    nexus3: {}
+    nexus3:
+      driver_opts:
+      type: "nfs"
+      o: "addr=172.27.72.20,nolock,rw"
+      device: ":/mnt/POOL-01/DOCKERVOLS/nexus"
 
 services:
   nexus:
