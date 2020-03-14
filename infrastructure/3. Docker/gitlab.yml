@@ -6,11 +6,6 @@ networks:
     attachable: true
 
 volumes:
-  redis-data:
-    driver_opts:
-      type: "nfs"
-      o: "addr=172.27.72.20,nolock,rw"
-      device: ":/mnt/POOL-01/DOCKERVOLS/gitlab_redis"
   postgresql-data:
     driver_opts:
       type: "nfs"
@@ -26,8 +21,6 @@ services:
 
   redis:
     image: redis
-    volumes:
-      - redis-data:/var/lib/redis:Z
     networks:
       - net
     deploy:
