@@ -60,8 +60,8 @@ dockerhub_base=ansible
 # management_mem_limit=2
 
 # Common Docker parameters
-awx_task_hostname=dhs-awx-task
-awx_web_hostname=dhs-awx-web
+awx_task_hostname=awx
+awx_web_hostname=awxweb
 postgres_data_dir="/var/lib/awx/pgdocker"
 host_port=80
 host_port_ssl=443
