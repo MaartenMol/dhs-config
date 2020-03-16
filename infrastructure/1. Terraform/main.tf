@@ -44,9 +44,9 @@ resource "vsphere_virtual_machine" "ANSIBLE-AWX" {
   datastore_id          = data.vsphere_datastore.datastore-02.id
   folder                = "ConfigManagement"
 
-  num_cpus              = 4
+  num_cpus              = 8
   num_cores_per_socket  = 4
-  memory                = 8192
+  memory                = 12288
   guest_id              = data.vsphere_virtual_machine.template.guest_id
   firmware              = data.vsphere_virtual_machine.template.firmware
 
@@ -92,9 +92,9 @@ resource "vsphere_virtual_machine" "DOCKER-01" {
   datastore_id          = data.vsphere_datastore.datastore-01.id
   folder                = "ConfigManagement"
 
-  num_cpus              = 4
+  num_cpus              = 8
   num_cores_per_socket  = 4
-  memory                = 4096
+  memory                = 12288
   guest_id              = data.vsphere_virtual_machine.template.guest_id
   firmware              = data.vsphere_virtual_machine.template.firmware
 
@@ -140,9 +140,9 @@ resource "vsphere_virtual_machine" "DOCKER-02" {
   datastore_id          = data.vsphere_datastore.datastore-02.id
   folder                = "ConfigManagement"
 
-  num_cpus              = 4
+  num_cpus              = 8
   num_cores_per_socket  = 4
-  memory                = 4096
+  memory                = 12288
   guest_id              = data.vsphere_virtual_machine.template.guest_id
   firmware              = data.vsphere_virtual_machine.template.firmware
 
@@ -188,9 +188,9 @@ resource "vsphere_virtual_machine" "DOCKER-03" {
   datastore_id          = data.vsphere_datastore.datastore-02.id
   folder                = "ConfigManagement"
 
-  num_cpus              = 4
+  num_cpus              = 8
   num_cores_per_socket  = 4
-  memory                = 4096
+  memory                = 12288
   guest_id              = data.vsphere_virtual_machine.template.guest_id
   firmware              = data.vsphere_virtual_machine.template.firmware
 
