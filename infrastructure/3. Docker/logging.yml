@@ -36,6 +36,11 @@ services:
       ES_JAVA_OPTS: "-Xmx2048m -Xms512m"
     networks:
       - net
+    ports:
+      - target: 9200
+        published: 9200
+        protocol: tcp
+        mode: ingress
     deploy:
       mode: replicated
       replicas: 1
