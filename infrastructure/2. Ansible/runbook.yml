@@ -256,12 +256,12 @@
         name: monitoring
         compose:
           - /root/dhs-config/infrastructure/3. Docker/monitoring.yml
-    - name: Deploy Logging
-      docker_stack:
-        state: present
-        name: logging
-        compose:
-          - /root/dhs-config/infrastructure/3. Docker/logging.yml
+    # - name: Deploy Logging
+    #   docker_stack:
+    #     state: present
+    #     name: logging
+    #     compose:
+    #       - /root/dhs-config/infrastructure/3. Docker/logging.yml
     - name: Deploy GitLab
       docker_stack:
         state: present
