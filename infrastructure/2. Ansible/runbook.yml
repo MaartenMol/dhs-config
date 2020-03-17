@@ -169,6 +169,16 @@
         name:
           - ansible
         state: latest
+    - name: Create the NFS directory if it does not exist
+      file:
+        path: /nfs
+        state: directory
+    - name: Mount NFS share
+      mount:
+        path: /nfs
+        src: 172.27.72.20:/mnt/POOL-01/ANSIBLE-AWX
+        fstype: nfs
+        state: mounted
     - name: Install Ansible Tower CLI
       pip:
         state: latest
