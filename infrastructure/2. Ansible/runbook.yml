@@ -281,3 +281,12 @@
         name: nexus
         compose:
           - /root/dhs-config/infrastructure/3. Docker/nexus.yml
+
+- name: Replace Logos for AWX
+  hosts: ansible-awx
+  gather_facts: no
+  tasks:
+  - name: Set Header Logo
+    shell: docker exec awx_web bash -l -c "curl https://img.maartenmol.nl/test.svg > /var/lib/awx/public/static/assets/logo-header.svg"
+  - name: Set Favicon
+    shell: docker exec awx_web bash -l -c "curl https://img.maartenmol.nl/favicon.ico > /var/lib/awx/public/static/assets/favicon.ico"
