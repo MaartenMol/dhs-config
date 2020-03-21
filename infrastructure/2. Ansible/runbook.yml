@@ -185,14 +185,10 @@
         state: latest
         name:
           - ansible-tower-cli
-    - name: Create the AWX directory if it does not exist
-      file:
-        path: /root/awx
-        state: directory
     - name: Download Ansible AWX 9.3.0
       unarchive:
         src: https://github.com/ansible/awx/archive/9.3.0.zip
-        dest: /root/awx
+        dest: /root
         remote_src: yes
     - name: Download inventory file for Ansible AWX
       get_url:
@@ -224,8 +220,8 @@
           - /sys:/sys:ro
           - /var/lib/docker/:/var/lib/docker:ro
           - /dev/disk/:/dev/disk:ro
-    - name: Run the Ansible AWX runbook
-      shell: ansible-playbook -i /root/inventory /root/awx/installer/install.yml
+    - name: Run the Ansible AWX 9.3.0 runbook
+      shell: ansible-playbook -i /root/inventory /root/awx-9.3.0/installer/install.yml
 
 - name: Setup Swarm Cluster
   hosts: docker_swarm_manager
