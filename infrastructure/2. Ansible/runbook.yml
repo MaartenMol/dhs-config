@@ -184,6 +184,10 @@
         state: latest
         name:
           - ansible-tower-cli
+    - name: Create the AWX directory if it does not exist
+      file:
+        path: /root/awx
+        state: directory
     - name: Download Ansible AWX 9.3.0
       unarchive:
         src: https://github.com/ansible/awx/archive/9.3.0.zip
