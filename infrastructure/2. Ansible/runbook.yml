@@ -12,6 +12,7 @@
           - epel-release
           - git
           - nfs-utils
+          - unzip
         state: latest
     - name: Making sure Python 3 is the main Python interpreter
       shell: alternatives --set python /usr/bin/python3
