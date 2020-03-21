@@ -184,10 +184,11 @@
         state: latest
         name:
           - ansible-tower-cli
-    - name: GIT Clone Ansible AWX
-      git:
-        repo: 'https://github.com/ansible/awx.git'
+    - name: Download Ansible AWX 9.3.0
+      unarchive:
+        src: https://github.com/ansible/awx/archive/9.3.0.zip
         dest: /root/awx
+        remote_src: yes
     - name: Download inventory file for Ansible AWX
       get_url:
         url: https://raw.githubusercontent.com/MaartenMol/dhs-config/master/ansible-awx/inventory?token=AC4QWR7K7TI6QEB5J5QLRLC6MD64Q
@@ -220,10 +221,6 @@
           - /dev/disk/:/dev/disk:ro
     - name: Run the Ansible AWX runbook
       shell: ansible-playbook -i /root/inventory /root/awx/installer/install.yml
-    - name: Set Header Logo AWX
-      shell: docker exec awx_web bash -l -c "curl https://img.maartenmol.nl/test.svg > /var/lib/awx/public/static/assets/logo-header.svg"
-    - name: Set Favicon AWX
-      shell: docker exec awx_web bash -l -c "curl https://raw.githubusercontent.com/MaartenMol/dhs-awx/master/awx/ui/client/assets/favicon.ico > /var/lib/awx/public/static/assets/favicon.ico"
 
 - name: Setup Swarm Cluster
   hosts: docker_swarm_manager
