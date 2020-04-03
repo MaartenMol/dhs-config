@@ -14,7 +14,7 @@ volumes:
 
 services:
   postgres:
-    image: postgres:11
+    image: sameersbn/postgresql:10-2
     environment:
       - DB_USER=guacamole
       - DB_PASS=foxtrottango
