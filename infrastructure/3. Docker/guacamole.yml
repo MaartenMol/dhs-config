@@ -20,6 +20,11 @@ services:
       POSTGRES_DB: guacamole_db
       POSTGRES_PASSWORD: P@ssword
       POSTGRES_USER: guacamole_user
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: ingress
     deploy:
       mode: replicated
       replicas: 1
