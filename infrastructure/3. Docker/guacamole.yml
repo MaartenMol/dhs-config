@@ -1,0 +1,87 @@
+version: "3.4"
+
+networks:
+  net:
+    driver: overlay
+    attachable: true
+
+volumes:
+  guacdb:
+    driver_opts:
+      type: "nfs"
+      o: "addr=172.27.72.20,nolock,rw"
+      device: ":/mnt/POOL-01/DOCKERVOLS/guacdb"
+
+services:
+  postgres:
+    image: postgres:11
+    environment:
+      - DB_USER=guacamole
+      - DB_PASS=foxtrottango
+      - DB_NAME=guacamole_db
+      - DB_EXTENSION=pg_trgm
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 128M
+    volumes:
+      - guacdb:/var/lib/postgresql
+    networks:
+      - net
+
+  guacd:
+    image: guacamole/guacd:1.1.0
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 128M
+    networks:
+      - net
+
+  guac:
+    image: guacamole/guacamole:1.1.0
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 128M
+    environment:
+      - POSTGRES_HOSTNAME=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DATABASE=guacamole_db
+      - POSTGRES_USER=guacamole
+      - POSTGRES_PASSWORD=foxtrottango
+      - GUACD_HOSTNAME=guacd
+    networks:
+      - net
+    ports:
+      - target: 8080
+        published: 20080
+        protocol: tcp
+        mode: ingress
