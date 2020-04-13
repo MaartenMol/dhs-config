@@ -251,7 +251,7 @@ services:
         VSPHERE_PASSWORD: "VD!fli9ht"
         VSPHERE_IGNORE_SSL: "True"
         VSPHERE_COLLECT_VMS: "True"
-        VSPHERE_COLLECT_VMGUESTS: "False"
+        VSPHERE_COLLECT_VMGUESTS: "True"
     deploy:
       mode: replicated
       replicas: 1
